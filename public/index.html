@@ -8,7 +8,10 @@
     <h1>List of IPs visiting this page</h1>
     <ul id="ipList"></ul>
     <script>
-      const ws = new WebSocket("ws://localhost:8080");
+      const host = window.location.host;
+      const ws = new WebSocket(
+        (window.location.protocol === "https:" ? "wss://" : "ws://") + host
+      );
       ws.addEventListener("open", () => {
         console.log("We are connected");
         ws.send("Hello server!");

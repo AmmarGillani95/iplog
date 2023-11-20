@@ -1,7 +1,22 @@
-// Importing the required modules
-const WebSocketServer = require("ws");
+const express = require("express");
+const http = require("http");
+const path = require("path");
+const WebSocket = require("ws");
 const sqlite3 = require("sqlite3").verbose();
 
+const app = express();
+const PORT = process.env.PORT || 8080;
+
+// Serve static files from the 'public' directory where 'index.html' is located
+app.use(express.static(path.join(__dirname, "public")));
+
+// Create an HTTP server
+const server = http.createServer(app);
+
+// Attach WebSocket server to the HTTP server
+const wss = new WebSocket.Server({ server });
+
+// SQLite database setup
 const db = new sqlite3.Database("./users.db", (err) => {
   if (err) {
     console.error(err.message);
@@ -24,7 +39,7 @@ function sendUpdatedIPList() {
       return;
     }
     wss.clients.forEach((client) => {
-      if (client.readyState === WebSocketServer.OPEN) {
+      if (client.readyState === WebSocket.OPEN) {
         client.send(
           JSON.stringify({ type: "update", ips: rows.map((r) => r.ip) })
         );
@@ -55,9 +70,6 @@ function deleteIPAddress(ip) {
   });
 }
 
-// Creating a new WebSocket server
-const wss = new WebSocketServer.Server({ port: 8080 });
-
 // Creating connection using WebSocket
 wss.on("connection", (ws, req) => {
   // Normalize the IP address format (remove IPv6 brackets if present)
@@ -83,4 +95,6 @@ wss.on("connection", (ws, req) => {
   };
 });
 
-console.log("The WebSocket server is running on port 8080");
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
