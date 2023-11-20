@@ -31,10 +31,10 @@ wipeDynamoDBTable();
 
 // Configure AWS
 const awsConfig = { region: "us-east-1" };
-if (!process.env.AWS_EXECUTION_ENV) {
-  awsConfig.accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-  awsConfig.secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-}
+
+awsConfig.accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+awsConfig.secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+
 AWS.config.update(awsConfig);
 
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
@@ -69,6 +69,7 @@ const sendUpdatedIPList = () => {
 
 wss.on("connection", (ws, req) => {
   const ipAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  ipAddress = ipAddress.replace(/^.*:/, "");
   console.log("New client connected, IP: " + ipAddress);
 
   // Insert IP address into DynamoDB
