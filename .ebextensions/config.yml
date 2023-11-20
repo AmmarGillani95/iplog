@@ -1,3 +1,0 @@
-commands:
-  01_install_node_modules:
-    command: "npm install --production"

@@ -40,7 +40,7 @@ AWS.config.update(awsConfig);
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = 3000;
 app.enable("trust proxy");
 
 app.use(express.static(path.join(__dirname, "public")));
