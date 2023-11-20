@@ -1,0 +1,20 @@
+{
+  "name": "websocket-server",
+  "version": "1.0.0",
+  "description": "A simple WebSocket server",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "syedammargillani@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "sqlite3": "^5.1.6",
+    "ws": "^8.14.2"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "nodemon": "^3.0.1"
+  }
+}
