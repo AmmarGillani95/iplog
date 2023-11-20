@@ -5,3 +5,6 @@
 !.elasticbeanstalk/*.global.yml
 users.db
 *.db
+.env
+node_modules
+node_modules/*
