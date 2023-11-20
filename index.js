@@ -41,6 +41,7 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
+app.enable("trust proxy");
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -67,7 +68,7 @@ const sendUpdatedIPList = () => {
 };
 
 wss.on("connection", (ws, req) => {
-  const ipAddress = req.socket.remoteAddress.replace(/^.*:/, "");
+  const ipAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
   console.log("New client connected, IP: " + ipAddress);
 
   // Insert IP address into DynamoDB
