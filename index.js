@@ -4,6 +4,31 @@ const path = require("path");
 const WebSocket = require("ws");
 const AWS = require("aws-sdk");
 
+const wipeDynamoDBTable = async () => {
+  const scanParams = {
+    TableName: "ips",
+  };
+
+  try {
+    const data = await dynamoDB.scan(scanParams).promise();
+    for (const item of data.Items) {
+      const deleteParams = {
+        TableName: "ips",
+        Key: {
+          ipAddress: item.ipAddress,
+        },
+      };
+      await dynamoDB.delete(deleteParams).promise();
+    }
+    console.log("DynamoDB table wiped.");
+  } catch (err) {
+    console.error("Error wiping DynamoDB table:", err);
+  }
+};
+
+// Call the wipe function when the server starts
+wipeDynamoDBTable();
+
 // Configure AWS
 const awsConfig = { region: "us-east-1" };
 if (!process.env.AWS_EXECUTION_ENV) {
