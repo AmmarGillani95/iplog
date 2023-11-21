@@ -4,6 +4,13 @@ const path = require("path");
 const WebSocket = require("ws");
 const AWS = require("aws-sdk");
 
+const awsConfig = { region: "us-east-1" };
+awsConfig.accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+awsConfig.secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+AWS.config.update(awsConfig);
+
+const dynamoDB = new AWS.DynamoDB.DocumentClient();
+
 const wipeDynamoDBTable = async () => {
   const scanParams = {
     TableName: "ips",
@@ -30,14 +37,6 @@ const wipeDynamoDBTable = async () => {
 wipeDynamoDBTable();
 
 // Configure AWS
-const awsConfig = { region: "us-east-1" };
-
-awsConfig.accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-awsConfig.secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-
-AWS.config.update(awsConfig);
-
-const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
 const app = express();
 const PORT = 3000;
@@ -68,7 +67,7 @@ const sendUpdatedIPList = () => {
 };
 
 wss.on("connection", (ws, req) => {
-  const ipAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  let ipAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
   ipAddress = ipAddress.replace(/^.*:/, "");
   console.log("New client connected, IP: " + ipAddress);
 
